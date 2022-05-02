@@ -5,15 +5,12 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.Scanner;
 
 public class Task extends UnicastRemoteObject implements Service {
-    private static String SERVER = "localhost";
-    private static Integer PORT = 1099;
-    private static String SERVICE = "FileService";
-    public String currentDirectory = "./";
-
     public Task() throws RemoteException {
         super();
     }
@@ -23,7 +20,7 @@ public class Task extends UnicastRemoteObject implements Service {
         boolean isDirectoryCreated = false;
 
         try {
-            File file = new File(this.currentDirectory + path);
+            File file = new File(path);
             if (file.mkdirs()) {
                 isDirectoryCreated = true;
             } else {
@@ -55,14 +52,14 @@ public class Task extends UnicastRemoteObject implements Service {
     }
 
     @Override
-    public String[] listFiles(String path) throws RemoteException {
+    public String[] listFiles(String path) throws RemoteException, IOException {
         File directory = new File(path);
         String[] dirContent = directory.list();
         return dirContent;
     }
 
     @Override
-    public boolean deleteFile(String path) throws RemoteException {
+    public boolean deleteFile(String path) throws RemoteException, IOException {
         boolean isFileDeleted = false;
 
         try {
@@ -122,17 +119,15 @@ public class Task extends UnicastRemoteObject implements Service {
     }
 
     @Override
-    public void navigateToDirectory(String path) throws IOException {
-        this.currentDirectory = path + "/";
-    }
+    public boolean writeFile(String path, String content) throws RemoteException, IOException {
+        boolean isWritten = false;
+        try {
+            Files.write(Paths.get(path), content.getBytes(), StandardOpenOption.APPEND);
+            isWritten = true;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-    @Override
-    public String getCurrentDirectory() {
-        return this.currentDirectory;
-    }
-
-    public static String getUri() throws RemoteException {
-        String uri = String.format("rmi://%s:%d/$s", SERVER, PORT, SERVICE);
-        return uri;
+        return isWritten;
     }
 }

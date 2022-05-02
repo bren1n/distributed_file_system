@@ -8,9 +8,9 @@ public interface Service extends Remote {
 
     public boolean createFile(String path) throws RemoteException, IOException;
 
-    public String[] listFiles(String path) throws RemoteException;
+    public String[] listFiles(String path) throws RemoteException, IOException;
 
-    public boolean deleteFile(String path) throws RemoteException;
+    public boolean deleteFile(String path) throws RemoteException, IOException;
 
     public void deleteDirectory(String path) throws RemoteException, IOException;
 
@@ -18,7 +18,5 @@ public interface Service extends Remote {
 
     public String openFile(String path) throws RemoteException, IOException;
 
-    public void navigateToDirectory(String path) throws RemoteException, IOException;
-
-    public String getCurrentDirectory() throws RemoteException;
+    public boolean writeFile(String path, String content) throws RemoteException, IOException;
 }

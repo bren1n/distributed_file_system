@@ -2,15 +2,17 @@ package src;
 
 import java.net.MalformedURLException;
 import java.rmi.*;
+import java.util.List;
 import java.util.Scanner;
 
 public class Client {
     public static void main(String[] args) {
         try {
-            Service service = (Service) Naming.lookup(Task.getUri());
+            Service service = (Service) Naming.lookup("rmi://localhost:1099/FileService");
+            System.out.println("Client connected.");
             Scanner sc = new Scanner(System.in);
             while (true) {
-                System.out.print("\u001B[32m" + service.getCurrentDirectory() + "$ ");
+                System.out.print("\u001B[32m" + "$ ");
                 String line = sc.nextLine();
                 System.out.print("\u001B[0m");
                 runCommand(service, line.split(" "));
@@ -73,8 +75,16 @@ public class Client {
                     System.out.println("Content from " + args[1] + ":");
                     System.out.print(content);
                     break;
-                case "cd":
-                    service.navigateToDirectory(args[1]);
+                case "write":
+                    Scanner sc = new Scanner(System.in);
+                    System.out.println("Type file content:");
+                    String contentToWrite = sc.nextLine();
+                    boolean isWritten = service.writeFile(args[1], contentToWrite);
+                    if (isWritten) {
+                        System.out.println("Successfully written file");
+                    } else {
+                        System.out.println("File can't be written.");
+                    }
                     break;
                 case "exit":
                     System.exit(0);
