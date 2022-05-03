@@ -8,7 +8,7 @@ import java.util.Scanner;
 public class Client {
     public static void main(String[] args) {
         try {
-            Service service = (Service) Naming.lookup("rmi://localhost:1099/FileService");
+            Service service = (Service) Naming.lookup("rmi://127.0.0.1:1098/FileService");
             System.out.println("Client connected.");
             Scanner sc = new Scanner(System.in);
             while (true) {
